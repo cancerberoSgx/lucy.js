@@ -1,3 +1,7 @@
+API for [emscripted](https://github.com/kripken/emscripten) [apache lucy](https://lucy.apache.org/) to run it in the browser. 
+
+Experiment !!!
+
 # End goal
 
  * have an https://lucy.apache.org/ compiled to javascript - just like sass.js is compiled from libsass
