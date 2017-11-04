@@ -1,2 +1,5 @@
 node_modules
 lucy_dist
+lucy_dist_js
+*.o
+*.o.js

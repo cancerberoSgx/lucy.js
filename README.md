@@ -28,17 +28,16 @@ Experiment !!!
 
 # compile lucy latest and run one of the c/samples: 
 
-    $ sh test-scripts/build-lucy-c.sh
+    $ sh scripts/build-lucy-c.sh
 
 
 how to build: 
 
-    sh test-scripts/lucy_locally.sh
+    sh scripts/build-lucy-c.sh
     cp -rf lucy_dist lucy_dist_js
     
 how to build lucy-clownfish/compiler (just after executing luci_locally.sh)
 
-    cp -rf lucy_dist lucy_dist_js
     cd lucy_dist_js/lucy-clownfish/compiler/c/
     make clean
     cp test-scripts/lucy-clownfish-compiler-makefile lucy_dist_js/lucy-clownfish/compiler/c/Makefile
