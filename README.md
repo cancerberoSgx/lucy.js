@@ -15,6 +15,7 @@ Experiment !!!
  * (DONE) learn how to compile lucy, required libraries from c sources and be able to compile and run one of the c/samples 
  * Follow reommendations in email: 
 
+    "
     Start by having an Indexer commit a Snapshot. Then add a DocWriter
     which does variable length records of key-value pairs. Next, create an
     IndexReader module which delegates to a DocReader module to fetch
@@ -23,7 +24,33 @@ Experiment !!!
     You can leave the inverted indexing modules and locking code for
     later, because the fundamental data structures and decomposition
     strategies of Lucy are sound.
+    "
 
 # compile lucy latest and run one of the c/samples: 
 
-    $ sh test-scripts/lucy_locally.sh
+    $ sh test-scripts/build-lucy-c.sh
+
+
+how to build: 
+
+    sh test-scripts/lucy_locally.sh
+    cp -rf lucy_dist lucy_dist_js
+    
+how to build lucy-clownfish/compiler (just after executing luci_locally.sh)
+
+    cp -rf lucy_dist lucy_dist_js
+    cd lucy_dist_js/lucy-clownfish/compiler/c/
+    make clean
+    cp test-scripts/lucy-clownfish-compiler-makefile lucy_dist_js/lucy-clownfish/compiler/c/Makefile
+    make clean
+    make
+    #  it will throw an error at the end building the exec just ignore : WARNING:root:cfc.o is not valid LLVM bitcode
+
+how to build lucy-clownfish/runtime
+
+    #build lucy-clownfish/compiler first
+    cd lucy_dist_js/lucy-clownfish/runtime/c
+    make clean
+    cp test-scripts/lucy-clownfish-runtime-makefile lucy_dist_js/lucy-clownfish/compiler/c/Makefile
+    make clean
+    make

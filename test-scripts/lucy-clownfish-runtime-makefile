@@ -1,0 +1,201 @@
+CC = emcc
+LINK = emcc
+PREFIX = /home/sg/git/lucy.js/lucy_dist/prefix
+BINDIR = $(PREFIX)/bin
+DATAROOTDIR = $(PREFIX)/share
+DATADIR = $(DATAROOTDIR)
+LIBDIR = $(PREFIX)/lib
+MANDIR = $(DATAROOTDIR)/man
+BASE_DIR = ..
+CFLAGS = \
+    -pedantic -Wall -Wextra -Wno-variadic-macros -std=gnu99 -D_GNU_SOURCE -fvisibility=hidden \
+    -O2 -g -fno-strict-aliasing -I . -I ../core -I src -I autogen/include
+CLOWNFISH_SHARED_LIB = libclownfish.so.0.6.0
+CLOWNFISH_SHARED_LIB_OBJS = \
+    src/tls.o \
+    src/clownfish.o \
+    ../core/Clownfish/PtrHash.o \
+    ../core/Clownfish/LockFreeRegistry.o \
+    ../core/Clownfish/TestHarness/TestUtils.o \
+    ../core/Clownfish/TestHarness/TestSuite.o \
+    ../core/Clownfish/TestHarness/TestSuiteRunner.o \
+    ../core/Clownfish/TestHarness/TestBatchRunner.o \
+    ../core/Clownfish/TestHarness/TestFormatter.o \
+    ../core/Clownfish/Num.o \
+    ../core/Clownfish/Obj.o \
+    ../core/Clownfish/Blob.o \
+    ../core/Clownfish/ByteBuf.o \
+    ../core/Clownfish/String.o \
+    ../core/Clownfish/Util/SortUtils.o \
+    ../core/Clownfish/Util/Atomic.o \
+    ../core/Clownfish/Util/Memory.o \
+    ../core/Clownfish/CharBuf.o \
+    ../core/Clownfish/HashIterator.o \
+    ../core/Clownfish/Hash.o \
+    ../core/Clownfish/Err.o \
+    ../core/Clownfish/Class.o \
+    ../core/Clownfish/Method.o \
+    ../core/Clownfish/Boolean.o \
+    ../core/Clownfish/Vector.o \
+    ../core/Clownfish.o \
+    autogen/source/cfish_parcel.o
+CLOWNFISH_SHARED_LIB_CFLAGS = -fPIC -D CFP_CFISH
+CLOWNFISH_SHARED_LIB_LDFLAGS = -g -l m -l pthread
+TESTCFISH_SHARED_LIB = libtestcfish.so.0.6.0
+TESTCFISH_SHARED_LIB_OBJS = \
+    ../test/Clownfish/Test/TestVector.o \
+    ../test/Clownfish/Test/TestLockFreeRegistry.o \
+    ../test/Clownfish/Test/TestCharBuf.o \
+    ../test/Clownfish/Test/RefObj.o \
+    ../test/Clownfish/Test/TestHash.o \
+    ../test/Clownfish/Test/TestByteBuf.o \
+    ../test/Clownfish/Test/TestObj.o \
+    ../test/Clownfish/Test/TestBoolean.o \
+    ../test/Clownfish/Test/Util/TestAtomic.o \
+    ../test/Clownfish/Test/Util/TestMemory.o \
+    ../test/Clownfish/Test/TestErr.o \
+    ../test/Clownfish/Test/TestPtrHash.o \
+    ../test/Clownfish/Test/TestNum.o \
+    ../test/Clownfish/Test/TestHost.o \
+    ../test/Clownfish/Test/TestHashIterator.o \
+    ../test/Clownfish/Test/TestString.o \
+    ../test/Clownfish/Test/TestClass.o \
+    ../test/Clownfish/Test/TestMethod.o \
+    ../test/Clownfish/Test/TestBlob.o \
+    ../test/Clownfish/Test.o \
+    ../test/TestClownfish.o \
+    autogen/source/testcfish_parcel.o
+TESTCFISH_SHARED_LIB_CFLAGS = -fPIC -D CFP_TESTCFISH
+TESTCFISH_SHARED_LIB_LDFLAGS = -g -l m -l pthread libclownfish.so.0.6
+CLOWNFISH_HEADERS = \
+    ../core/Clownfish/Hash.cfh \
+    ../core/Clownfish/Blob.cfh \
+    ../core/Clownfish/TestHarness/TestBatchRunner.cfh \
+    ../core/Clownfish/TestHarness/TestBatch.cfh \
+    ../core/Clownfish/TestHarness/TestFormatter.cfh \
+    ../core/Clownfish/TestHarness/TestUtils.cfh \
+    ../core/Clownfish/TestHarness/TestSuite.cfh \
+    ../core/Clownfish/TestHarness/TestSuiteRunner.cfh \
+    ../core/Clownfish/Method.cfh \
+    ../core/Clownfish/ByteBuf.cfh \
+    ../core/Clownfish/Num.cfh \
+    ../core/Clownfish/Err.cfh \
+    ../core/Clownfish/Util/Memory.cfh \
+    ../core/Clownfish/Util/SortUtils.cfh \
+    ../core/Clownfish/Class.cfh \
+    ../core/Clownfish/CharBuf.cfh \
+    ../core/Clownfish/String.cfh \
+    ../core/Clownfish/HashIterator.cfh \
+    ../core/Clownfish/Vector.cfh \
+    ../core/Clownfish/Obj.cfh \
+    ../core/Clownfish/Boolean.cfh \
+    ../test/Clownfish/Test/TestHashIterator.cfh \
+    ../test/Clownfish/Test/TestCharBuf.cfh \
+    ../test/Clownfish/Test/TestObj.cfh \
+    ../test/Clownfish/Test/TestVector.cfh \
+    ../test/Clownfish/Test/TestHost.cfh \
+    ../test/Clownfish/Test/TestString.cfh \
+    ../test/Clownfish/Test/TestClass.cfh \
+    ../test/Clownfish/Test/TestBoolean.cfh \
+    ../test/Clownfish/Test/Util/TestAtomic.cfh \
+    ../test/Clownfish/Test/Util/TestMemory.cfh \
+    ../test/Clownfish/Test/TestNum.cfh \
+    ../test/Clownfish/Test/TestByteBuf.cfh \
+    ../test/Clownfish/Test/TestErr.cfh \
+    ../test/Clownfish/Test/RefObj.cfh \
+    ../test/Clownfish/Test/TestPtrHash.cfh \
+    ../test/Clownfish/Test/TestLockFreeRegistry.cfh \
+    ../test/Clownfish/Test/TestMethod.cfh \
+    ../test/Clownfish/Test/TestHash.cfh \
+    ../test/Clownfish/Test/TestBlob.cfh \
+    ../test/Clownfish/Test.cfh
+TEST_CFISH_EXE = t/test_cfish
+TEST_CFISH_EXE_OBJS = t/test_cfish.o
+TEST_CFISH_EXE_CFLAGS = 
+TEST_CFISH_EXE_LDFLAGS = -Wl,-rpath,"$$PWD" libtestcfish.so.0.6 libclownfish.so.0.6
+
+all : $(CLOWNFISH_SHARED_LIB)
+
+$(CLOWNFISH_SHARED_LIB_OBJS) : autogen/hierarchy.json
+
+$(TESTCFISH_SHARED_LIB_OBJS) : autogen/hierarchy.json
+
+../../compiler/c/cfc :
+	(cd ../../compiler/c && $(MAKE))
+
+autogen/hierarchy.json : ../../compiler/c/cfc $(CLOWNFISH_HEADERS)
+	../../compiler/c/cfc --charmonic --source=../core --source=../test --dest=autogen --header=cfc_header
+
+autogen/source/cfish_parcel.c : autogen/hierarchy.json
+
+autogen/source/testcfish_parcel.c : autogen/hierarchy.json
+
+$(TEST_CFISH_EXE_OBJS) : autogen/hierarchy.json
+
+test : $(TEST_CFISH_EXE)
+	$(TEST_CFISH_EXE)
+
+valgrind : $(TEST_CFISH_EXE)
+	valgrind --leak-check=full $(TEST_CFISH_EXE)
+
+libclownfish.so.0.6.0 : $(CLOWNFISH_SHARED_LIB_OBJS)
+	$(LINK) -o $@ -shared -Wl,-soname,libclownfish.so.0.6 $(CLOWNFISH_SHARED_LIB_OBJS) $(CLOWNFISH_SHARED_LIB_LDFLAGS)
+	ln -sf libclownfish.so.0.6.0 libclownfish.so.0.6
+	ln -sf libclownfish.so.0.6 libclownfish.so
+
+src/%.o : src/%.c
+	$(CC) $(CFLAGS) $(CLOWNFISH_SHARED_LIB_CFLAGS) $< -c -o $@
+
+../core/%.o : ../core/%.c
+	$(CC) $(CFLAGS) $(CLOWNFISH_SHARED_LIB_CFLAGS) $< -c -o $@
+
+autogen/source/cfish_parcel.o : autogen/source/cfish_parcel.c
+	$(CC) $(CFLAGS) $(CLOWNFISH_SHARED_LIB_CFLAGS) autogen/source/cfish_parcel.c -c -o $@
+
+libtestcfish.so.0.6.0 : $(TESTCFISH_SHARED_LIB_OBJS) $(CLOWNFISH_SHARED_LIB)
+	$(LINK) -o $@ -shared -Wl,-soname,libtestcfish.so.0.6 $(TESTCFISH_SHARED_LIB_OBJS) $(TESTCFISH_SHARED_LIB_LDFLAGS)
+	ln -sf libtestcfish.so.0.6.0 libtestcfish.so.0.6
+	ln -sf libtestcfish.so.0.6 libtestcfish.so
+
+../test/%.o : ../test/%.c
+	$(CC) $(CFLAGS) $(TESTCFISH_SHARED_LIB_CFLAGS) $< -c -o $@
+
+autogen/source/testcfish_parcel.o : autogen/source/testcfish_parcel.c
+	$(CC) $(CFLAGS) $(TESTCFISH_SHARED_LIB_CFLAGS) autogen/source/testcfish_parcel.c -c -o $@
+
+t/test_cfish : $(TEST_CFISH_EXE_OBJS) $(TESTCFISH_SHARED_LIB) $(CLOWNFISH_SHARED_LIB)
+	$(LINK) -o $@ $(TEST_CFISH_EXE_OBJS) $(TEST_CFISH_EXE_LDFLAGS) 
+
+install : all
+	mkdir -p "$(LIBDIR)"
+	mkdir -p "$(DATADIR)"
+	mkdir -p "$(MANDIR)"
+	mkdir -p "$(LIBDIR)/pkgconfig"
+	cp -f libclownfish.so.0.6.0 "$(LIBDIR)"
+	ln -sf libclownfish.so.0.6.0 "$(LIBDIR)/libclownfish.so.0.6"
+	ln -sf libclownfish.so.0.6 "$(LIBDIR)/libclownfish.so"
+	cp -Rf autogen/share/* "$(DATADIR)"
+	cp -Rf autogen/man/* "$(MANDIR)"
+	printf 'libdir=$(LIBDIR)\nversion=0.6.0\n\nName: Clownfish\nDescription: Symbiotic object system\nURL: http://lucy.apache.org/\nVersion: $${version}\nLibs: -L$${libdir} -lclownfish\n' >"$(LIBDIR)/pkgconfig/clownfish.pc"
+
+clean :
+	rm -f $(CLOWNFISH_SHARED_LIB_OBJS)
+	rm -f libclownfish.so.0.6.0
+	rm -f libclownfish.so.0.6
+	rm -f libclownfish.so
+	rm -f $(TESTCFISH_SHARED_LIB_OBJS)
+	rm -f libtestcfish.so.0.6.0
+	rm -f libtestcfish.so.0.6
+	rm -f libtestcfish.so
+	rm -rf autogen
+	(cd ../../compiler/c && $(MAKE) clean)
+	rm -f $(TEST_CFISH_EXE_OBJS)
+	rm -f t/test_cfish
+
+distclean : clean
+	rm -f charmonizer charmonizer.obj charmony.h Makefile
+	(cd ../../compiler/c && $(MAKE) distclean)
+
+.c.o :
+	$(CC) $(CFLAGS) -c $< -o $@
+

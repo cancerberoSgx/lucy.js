@@ -1,0 +1,435 @@
+modified lines have a "sgurin" comment
+
+CC = emcc # sgurin
+LINK = emcc # sgurin
+PREFIX = /home/sg/git/lucy.js/lucy_dist/prefix
+BINDIR = $(PREFIX)/bin
+DATAROOTDIR = $(PREFIX)/share
+DATADIR = $(DATAROOTDIR)
+LIBDIR = $(PREFIX)/lib
+MANDIR = $(DATAROOTDIR)/man
+BASE_DIR = ..
+CFC_CFLAGS = \
+    -pedantic -Wall -Wextra -Wno-variadic-macros -Wno-overlength-strings -std=gnu99 -D_GNU_SOURCE \
+    -O2 -g -I . -I ../include -I ../src -I ../modules/CommonMark/src
+CFC_EXE = cfc
+CFC_EXE_OBJS = cfc.o
+CFC_EXE_CFLAGS = $(CFC_CFLAGS)
+CFC_EXE_LDFLAGS = $(CFC_STATIC_LIB)
+TEST_CFC_EXE = t/test_cfc
+TEST_CFC_EXE_OBJS = \
+    t/test_cfc.o \
+    ../src/CFCTest.o \
+    ../src/CFCTestType.o \
+    ../src/CFCTestClass.o \
+    ../src/CFCTestHierarchy.o \
+    ../src/CFCTestFile.o \
+    ../src/CFCTestUtil.o \
+    ../src/CFCTestParcel.o \
+    ../src/CFCTestVariable.o \
+    ../src/CFCTestCBlock.o \
+    ../src/CFCTestParser.o \
+    ../src/CFCTestMethod.o \
+    ../src/CFCTestDocuComment.o \
+    ../src/CFCTestSymbol.o \
+    ../src/CFCTestFileSpec.o \
+    ../src/CFCTestParamList.o \
+    ../src/CFCTestFunction.o \
+    ../src/CFCTestVersion.o
+TEST_CFC_EXE_CFLAGS = $(CFC_CFLAGS)
+TEST_CFC_EXE_LDFLAGS = $(CFC_STATIC_LIB)
+CFC_STATIC_LIB = libcfc.a
+CFC_STATIC_LIB_OBJS = \
+    ../src/CFCGoMethod.o \
+    ../src/CFCPerlMethod.o \
+    ../src/CFCPerlPod.o \
+    ../src/CFCC.o \
+    ../src/CFCPyMethod.o \
+    ../src/CFCRuby.o \
+    ../src/CFCJson.o \
+    ../src/CFCUri.o \
+    ../src/CFCBindSpecs.o \
+    ../src/CFCGoFunc.o \
+    ../src/CFCPyClass.o \
+    ../src/CFCPerlSub.o \
+    ../src/CFCType.o \
+    ../src/CFCVariable.o \
+    ../src/CFCVersion.o \
+    ../src/CFCGoTypeMap.o \
+    ../src/CFCPyTypeMap.o \
+    ../src/CFCFile.o \
+    ../src/CFCPerlConstructor.o \
+    ../src/CFCBindMethod.o \
+    ../src/CFCBindAliases.o \
+    ../src/CFCDocuComment.o \
+    ../src/CFCCMan.o \
+    ../src/CFCDocument.o \
+    ../src/CFCParamList.o \
+    ../src/CFCLexHeader.o \
+    ../src/CFCFileSpec.o \
+    ../src/CFCBindFile.o \
+    ../src/CFCClass.o \
+    ../src/CFCCallable.o \
+    ../src/CFCGo.o \
+    ../src/CFCParser.o \
+    ../src/CFCFunction.o \
+    ../src/CFCBindClass.o \
+    ../src/CFCBindCore.o \
+    ../src/CFCUtil.o \
+    ../src/CFCHierarchy.o \
+    ../src/CFCPerl.o \
+    ../src/CFCCBlock.o \
+    ../src/CFCGoClass.o \
+    ../src/CFCPython.o \
+    ../src/CFCPerlClass.o \
+    ../src/CFCParcel.o \
+    ../src/CFCPerlTypeMap.o \
+    ../src/CFCSymbol.o \
+    ../src/CFCCHtml.o \
+    ../src/CFCMemPool.o \
+    ../src/CFCBase.o \
+    ../src/CFCMethod.o \
+    ../src/CFCBindFunction.o \
+    ../modules/CommonMark/src/cmark_ctype.o \
+    ../modules/CommonMark/src/iterator.o \
+    ../modules/CommonMark/src/commonmark.o \
+    ../modules/CommonMark/src/inlines.o \
+    ../modules/CommonMark/src/latex.o \
+    ../modules/CommonMark/src/buffer.o \
+    ../modules/CommonMark/src/xml.o \
+    ../modules/CommonMark/src/node.o \
+    ../modules/CommonMark/src/utf8.o \
+    ../modules/CommonMark/src/html.o \
+    ../modules/CommonMark/src/references.o \
+    ../modules/CommonMark/src/houdini_href_e.o \
+    ../modules/CommonMark/src/render.o \
+    ../modules/CommonMark/src/cmark.o \
+    ../modules/CommonMark/src/scanners.o \
+    ../modules/CommonMark/src/blocks.o \
+    ../modules/CommonMark/src/houdini_html_u.o \
+    ../modules/CommonMark/src/man.o \
+    ../modules/CommonMark/src/houdini_html_e.o \
+    ../src/CFCParseHeader.o
+CFC_STATIC_LIB_CFLAGS = $(CFC_CFLAGS)
+CFC_STATIC_LIB_LDFLAGS = 
+LEMON_EXE = ../../lemon/lemon
+LEMON_EXE_OBJS = ../../lemon/lemon.o
+LEMON_EXE_CFLAGS = 
+LEMON_EXE_LDFLAGS = 
+
+all : $(CFC_EXE)
+
+static : $(CFC_STATIC_LIB)
+
+$(CFC_STATIC_LIB_OBJS) : ../src/CFCParseHeader.c
+
+../src/CFCParseHeader.c : ../src/CFCParseHeader.y $(LEMON_EXE)
+	$(LEMON_EXE) -q ../src/CFCParseHeader.y
+
+test : all $(TEST_CFC_EXE)
+	$(TEST_CFC_EXE)
+
+valgrind : all $(TEST_CFC_EXE)
+	CLOWNFISH_VALGRIND=1 valgrind --leak-check=full $(TEST_CFC_EXE)
+
+cfc : $(CFC_EXE_OBJS) $(CFC_STATIC_LIB)
+	$(LINK) -o $@ $(CFC_EXE_OBJS) $(CFC_EXE_LDFLAGS) 
+
+cfc.o : cfc.c
+	$(CC) $(CFLAGS) $(CFC_EXE_CFLAGS) cfc.c -c -o $@
+
+t/test_cfc : $(TEST_CFC_EXE_OBJS) $(CFC_STATIC_LIB)
+	$(LINK) -o $@ $(TEST_CFC_EXE_OBJS) $(TEST_CFC_EXE_LDFLAGS) 
+
+t/test_cfc.o : t/test_cfc.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) t/test_cfc.c -c -o $@
+
+../src/CFCTest.o : ../src/CFCTest.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTest.c -c -o $@
+
+../src/CFCTestType.o : ../src/CFCTestType.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestType.c -c -o $@
+
+../src/CFCTestClass.o : ../src/CFCTestClass.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestClass.c -c -o $@
+
+../src/CFCTestHierarchy.o : ../src/CFCTestHierarchy.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestHierarchy.c -c -o $@
+
+../src/CFCTestFile.o : ../src/CFCTestFile.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestFile.c -c -o $@
+
+../src/CFCTestUtil.o : ../src/CFCTestUtil.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestUtil.c -c -o $@
+
+../src/CFCTestParcel.o : ../src/CFCTestParcel.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestParcel.c -c -o $@
+
+../src/CFCTestVariable.o : ../src/CFCTestVariable.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestVariable.c -c -o $@
+
+../src/CFCTestCBlock.o : ../src/CFCTestCBlock.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestCBlock.c -c -o $@
+
+../src/CFCTestParser.o : ../src/CFCTestParser.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestParser.c -c -o $@
+
+../src/CFCTestMethod.o : ../src/CFCTestMethod.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestMethod.c -c -o $@
+
+../src/CFCTestDocuComment.o : ../src/CFCTestDocuComment.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestDocuComment.c -c -o $@
+
+../src/CFCTestSymbol.o : ../src/CFCTestSymbol.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestSymbol.c -c -o $@
+
+../src/CFCTestFileSpec.o : ../src/CFCTestFileSpec.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestFileSpec.c -c -o $@
+
+../src/CFCTestParamList.o : ../src/CFCTestParamList.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestParamList.c -c -o $@
+
+../src/CFCTestFunction.o : ../src/CFCTestFunction.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestFunction.c -c -o $@
+
+../src/CFCTestVersion.o : ../src/CFCTestVersion.c
+	$(CC) $(CFLAGS) $(TEST_CFC_EXE_CFLAGS) ../src/CFCTestVersion.c -c -o $@
+
+libcfc.a : $(CFC_STATIC_LIB_OBJS)
+	ar rcs $@ $(CFC_STATIC_LIB_OBJS)
+
+../src/CFCGoMethod.o : ../src/CFCGoMethod.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCGoMethod.c -c -o $@
+
+../src/CFCPerlMethod.o : ../src/CFCPerlMethod.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPerlMethod.c -c -o $@
+
+../src/CFCPerlPod.o : ../src/CFCPerlPod.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPerlPod.c -c -o $@
+
+../src/CFCC.o : ../src/CFCC.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCC.c -c -o $@
+
+../src/CFCPyMethod.o : ../src/CFCPyMethod.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPyMethod.c -c -o $@
+
+../src/CFCRuby.o : ../src/CFCRuby.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCRuby.c -c -o $@
+
+../src/CFCJson.o : ../src/CFCJson.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCJson.c -c -o $@
+
+../src/CFCUri.o : ../src/CFCUri.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCUri.c -c -o $@
+
+../src/CFCBindSpecs.o : ../src/CFCBindSpecs.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCBindSpecs.c -c -o $@
+
+../src/CFCGoFunc.o : ../src/CFCGoFunc.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCGoFunc.c -c -o $@
+
+../src/CFCPyClass.o : ../src/CFCPyClass.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPyClass.c -c -o $@
+
+../src/CFCPerlSub.o : ../src/CFCPerlSub.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPerlSub.c -c -o $@
+
+../src/CFCType.o : ../src/CFCType.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCType.c -c -o $@
+
+../src/CFCVariable.o : ../src/CFCVariable.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCVariable.c -c -o $@
+
+../src/CFCVersion.o : ../src/CFCVersion.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCVersion.c -c -o $@
+
+../src/CFCGoTypeMap.o : ../src/CFCGoTypeMap.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCGoTypeMap.c -c -o $@
+
+../src/CFCPyTypeMap.o : ../src/CFCPyTypeMap.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPyTypeMap.c -c -o $@
+
+../src/CFCFile.o : ../src/CFCFile.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCFile.c -c -o $@
+
+../src/CFCPerlConstructor.o : ../src/CFCPerlConstructor.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPerlConstructor.c -c -o $@
+
+../src/CFCBindMethod.o : ../src/CFCBindMethod.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCBindMethod.c -c -o $@
+
+../src/CFCBindAliases.o : ../src/CFCBindAliases.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCBindAliases.c -c -o $@
+
+../src/CFCDocuComment.o : ../src/CFCDocuComment.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCDocuComment.c -c -o $@
+
+../src/CFCCMan.o : ../src/CFCCMan.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCCMan.c -c -o $@
+
+../src/CFCDocument.o : ../src/CFCDocument.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCDocument.c -c -o $@
+
+../src/CFCParamList.o : ../src/CFCParamList.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCParamList.c -c -o $@
+
+../src/CFCLexHeader.o : ../src/CFCLexHeader.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCLexHeader.c -c -o $@
+
+../src/CFCFileSpec.o : ../src/CFCFileSpec.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCFileSpec.c -c -o $@
+
+../src/CFCBindFile.o : ../src/CFCBindFile.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCBindFile.c -c -o $@
+
+../src/CFCClass.o : ../src/CFCClass.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCClass.c -c -o $@
+
+../src/CFCCallable.o : ../src/CFCCallable.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCCallable.c -c -o $@
+
+../src/CFCGo.o : ../src/CFCGo.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCGo.c -c -o $@
+
+../src/CFCParser.o : ../src/CFCParser.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCParser.c -c -o $@
+
+../src/CFCFunction.o : ../src/CFCFunction.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCFunction.c -c -o $@
+
+../src/CFCBindClass.o : ../src/CFCBindClass.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCBindClass.c -c -o $@
+
+../src/CFCBindCore.o : ../src/CFCBindCore.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCBindCore.c -c -o $@
+
+../src/CFCUtil.o : ../src/CFCUtil.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCUtil.c -c -o $@
+
+../src/CFCHierarchy.o : ../src/CFCHierarchy.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCHierarchy.c -c -o $@
+
+../src/CFCPerl.o : ../src/CFCPerl.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPerl.c -c -o $@
+
+../src/CFCCBlock.o : ../src/CFCCBlock.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCCBlock.c -c -o $@
+
+../src/CFCGoClass.o : ../src/CFCGoClass.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCGoClass.c -c -o $@
+
+../src/CFCPython.o : ../src/CFCPython.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPython.c -c -o $@
+
+../src/CFCPerlClass.o : ../src/CFCPerlClass.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPerlClass.c -c -o $@
+
+../src/CFCParcel.o : ../src/CFCParcel.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCParcel.c -c -o $@
+
+../src/CFCPerlTypeMap.o : ../src/CFCPerlTypeMap.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCPerlTypeMap.c -c -o $@
+
+../src/CFCSymbol.o : ../src/CFCSymbol.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCSymbol.c -c -o $@
+
+../src/CFCCHtml.o : ../src/CFCCHtml.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCCHtml.c -c -o $@
+
+../src/CFCMemPool.o : ../src/CFCMemPool.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCMemPool.c -c -o $@
+
+../src/CFCBase.o : ../src/CFCBase.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCBase.c -c -o $@
+
+../src/CFCMethod.o : ../src/CFCMethod.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCMethod.c -c -o $@
+
+../src/CFCBindFunction.o : ../src/CFCBindFunction.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCBindFunction.c -c -o $@
+
+../modules/CommonMark/src/cmark_ctype.o : ../modules/CommonMark/src/cmark_ctype.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/cmark_ctype.c -c -o $@
+
+../modules/CommonMark/src/iterator.o : ../modules/CommonMark/src/iterator.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/iterator.c -c -o $@
+
+../modules/CommonMark/src/commonmark.o : ../modules/CommonMark/src/commonmark.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/commonmark.c -c -o $@
+
+../modules/CommonMark/src/inlines.o : ../modules/CommonMark/src/inlines.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/inlines.c -c -o $@
+
+../modules/CommonMark/src/latex.o : ../modules/CommonMark/src/latex.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/latex.c -c -o $@
+
+../modules/CommonMark/src/buffer.o : ../modules/CommonMark/src/buffer.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/buffer.c -c -o $@
+
+../modules/CommonMark/src/xml.o : ../modules/CommonMark/src/xml.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/xml.c -c -o $@
+
+../modules/CommonMark/src/node.o : ../modules/CommonMark/src/node.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/node.c -c -o $@
+
+../modules/CommonMark/src/utf8.o : ../modules/CommonMark/src/utf8.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/utf8.c -c -o $@
+
+../modules/CommonMark/src/html.o : ../modules/CommonMark/src/html.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/html.c -c -o $@
+
+../modules/CommonMark/src/references.o : ../modules/CommonMark/src/references.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/references.c -c -o $@
+
+../modules/CommonMark/src/houdini_href_e.o : ../modules/CommonMark/src/houdini_href_e.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/houdini_href_e.c -c -o $@
+
+../modules/CommonMark/src/render.o : ../modules/CommonMark/src/render.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/render.c -c -o $@
+
+../modules/CommonMark/src/cmark.o : ../modules/CommonMark/src/cmark.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/cmark.c -c -o $@
+
+../modules/CommonMark/src/scanners.o : ../modules/CommonMark/src/scanners.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/scanners.c -c -o $@
+
+../modules/CommonMark/src/blocks.o : ../modules/CommonMark/src/blocks.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/blocks.c -c -o $@
+
+../modules/CommonMark/src/houdini_html_u.o : ../modules/CommonMark/src/houdini_html_u.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/houdini_html_u.c -c -o $@
+
+../modules/CommonMark/src/man.o : ../modules/CommonMark/src/man.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/man.c -c -o $@
+
+../modules/CommonMark/src/houdini_html_e.o : ../modules/CommonMark/src/houdini_html_e.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../modules/CommonMark/src/houdini_html_e.c -c -o $@
+
+../src/CFCParseHeader.o : ../src/CFCParseHeader.c
+	$(CC) $(CFLAGS) $(CFC_STATIC_LIB_CFLAGS) ../src/CFCParseHeader.c -c -o $@
+
+../../lemon/lemon : $(LEMON_EXE_OBJS)
+	$(LINK) -o $@ $(LEMON_EXE_OBJS) $(LEMON_EXE_LDFLAGS) 
+
+install : all
+	mkdir -p "$(BINDIR)"
+	cp -f cfc "$(BINDIR)"
+
+clean :
+	# rm -f $(CFC_EXE_OBJS) # sgurin
+	# rm -f cfc # sgurin
+	# rm -f $(TEST_CFC_EXE_OBJS) # sgurin
+	# rm -f t/test_cfc # sgurin
+	rm -f $(CFC_STATIC_LIB_OBJS)
+	rm -f libcfc.a
+	# rm -f $(LEMON_EXE_OBJS) # sgurin
+	# rm -f ../../lemon/lemon # sgurin
+	rm -f ../src/CFCParseHeader.h
+	rm -f ../src/CFCParseHeader.c
+
+distclean : clean
+	rm -f charmonizer charmonizer.obj charmony.h Makefile
+
+.c.o :
+	$(CC) $(CFLAGS) -c $< -o $@
+
