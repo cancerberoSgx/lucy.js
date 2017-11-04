@@ -1,0 +1,613 @@
+CC = emcc
+LINK = emcc
+PREFIX = /home/sg/git/lucy.js/lucy_dist/prefix
+BINDIR = $(PREFIX)/bin
+DATAROOTDIR = $(PREFIX)/share
+DATADIR = $(DATAROOTDIR)
+LIBDIR = $(PREFIX)/lib
+MANDIR = $(DATAROOTDIR)/man
+BASE_DIR = ..
+LUCY_CFLAGS = \
+    -pedantic -Wall -Wextra -Wno-variadic-macros -std=gnu99 -D_GNU_SOURCE -fvisibility=hidden \
+    -O2 -g -fno-strict-aliasing -I ../../../scripts/include/ -I . -I ../core -I autogen/include -I ../modules/analysis/snowstem/source/include -I ../modules/unicode/ucd -I ../modules/unicode/utf8proc
+LUCY_SHARED_LIB = liblucy.so.0.6.0
+LUCY_SHARED_LIB_OBJS = \
+    src/Lucy/Index/Inverter.o.js \
+    src/Lucy/Index/DocReader.o.js \
+    src/Lucy/Document/Doc.o.js \
+    src/Lucy/Analysis/RegexTokenizer.o.js \
+    ../core/Lucy/Index/RawPostingList.o.js \
+    ../core/Lucy/Index/PostingPool.o.js \
+    ../core/Lucy/Index/TermStepper.o.js \
+    ../core/Lucy/Index/IndexManager.o.js \
+    ../core/Lucy/Index/DataReader.o.js \
+    ../core/Lucy/Index/HighlightReader.o.js \
+    ../core/Lucy/Index/DocWriter.o.js \
+    ../core/Lucy/Index/LexiconReader.o.js \
+    ../core/Lucy/Index/PostingList.o.js \
+    ../core/Lucy/Index/DeletionsWriter.o.js \
+    ../core/Lucy/Index/BackgroundMerger.o.js \
+    ../core/Lucy/Index/Inverter.o.js \
+    ../core/Lucy/Index/SegWriter.o.js \
+    ../core/Lucy/Index/SortCache.o.js \
+    ../core/Lucy/Index/SegPostingList.o.js \
+    ../core/Lucy/Index/Segment.o.js \
+    ../core/Lucy/Index/TermVector.o.js \
+    ../core/Lucy/Index/DeletionsReader.o.js \
+    ../core/Lucy/Index/SegLexicon.o.js \
+    ../core/Lucy/Index/Posting.o.js \
+    ../core/Lucy/Index/SortFieldWriter.o.js \
+    ../core/Lucy/Index/LexiconWriter.o.js \
+    ../core/Lucy/Index/HighlightWriter.o.js \
+    ../core/Lucy/Index/PostingListWriter.o.js \
+    ../core/Lucy/Index/DocVector.o.js \
+    ../core/Lucy/Index/Indexer.o.js \
+    ../core/Lucy/Index/PolyLexicon.o.js \
+    ../core/Lucy/Index/Lexicon.o.js \
+    ../core/Lucy/Index/Snapshot.o.js \
+    ../core/Lucy/Index/SortReader.o.js \
+    ../core/Lucy/Index/SkipStepper.o.js \
+    ../core/Lucy/Index/SortWriter.o.js \
+    ../core/Lucy/Index/Similarity.o.js \
+    ../core/Lucy/Index/DocReader.o.js \
+    ../core/Lucy/Index/RawLexicon.o.js \
+    ../core/Lucy/Index/SegReader.o.js \
+    ../core/Lucy/Index/PolyReader.o.js \
+    ../core/Lucy/Index/BitVecDelDocs.o.js \
+    ../core/Lucy/Index/DataWriter.o.js \
+    ../core/Lucy/Index/FilePurger.o.js \
+    ../core/Lucy/Index/SortCache/NumericSortCache.o.js \
+    ../core/Lucy/Index/SortCache/TextSortCache.o.js \
+    ../core/Lucy/Index/PostingListReader.o.js \
+    ../core/Lucy/Index/LexIndex.o.js \
+    ../core/Lucy/Index/Posting/RawPosting.o.js \
+    ../core/Lucy/Index/Posting/MatchPosting.o.js \
+    ../core/Lucy/Index/Posting/RichPosting.o.js \
+    ../core/Lucy/Index/Posting/ScorePosting.o.js \
+    ../core/Lucy/Index/TermInfo.o.js \
+    ../core/Lucy/Index/IndexReader.o.js \
+    ../core/Lucy/Util/MemoryPool.o.js \
+    ../core/Lucy/Util/Stepper.o.js \
+    ../core/Lucy/Util/IndexFileNames.o.js \
+    ../core/Lucy/Util/PriorityQueue.o.js \
+    ../core/Lucy/Util/BlobSortEx.o.js \
+    ../core/Lucy/Util/ProcessID.o.js \
+    ../core/Lucy/Util/Json.o.js \
+    ../core/Lucy/Util/Sleep.o.js \
+    ../core/Lucy/Util/StringHelper.o.js \
+    ../core/Lucy/Util/SortExternal.o.js \
+    ../core/Lucy/Util/Freezer.o.js \
+    ../core/Lucy/Util/Debug.o.js \
+    ../core/Lucy/Highlight/Highlighter.o.js \
+    ../core/Lucy/Highlight/HeatMap.o.js \
+    ../core/Lucy/Document/Doc.o.js \
+    ../core/Lucy/Document/HitDoc.o.js \
+    ../core/Lucy/Search/MatchAllQuery.o.js \
+    ../core/Lucy/Search/TermMatcher.o.js \
+    ../core/Lucy/Search/NoMatchQuery.o.js \
+    ../core/Lucy/Search/SortSpec.o.js \
+    ../core/Lucy/Search/RequiredOptionalMatcher.o.js \
+    ../core/Lucy/Search/MatchDoc.o.js \
+    ../core/Lucy/Search/ANDQuery.o.js \
+    ../core/Lucy/Search/NoMatchMatcher.o.js \
+    ../core/Lucy/Search/RangeMatcher.o.js \
+    ../core/Lucy/Search/ORMatcher.o.js \
+    ../core/Lucy/Search/PolyQuery.o.js \
+    ../core/Lucy/Search/QueryParser/ParserElem.o.js \
+    ../core/Lucy/Search/QueryParser/QueryLexer.o.js \
+    ../core/Lucy/Search/IndexSearcher.o.js \
+    ../core/Lucy/Search/TopDocs.o.js \
+    ../core/Lucy/Search/Searcher.o.js \
+    ../core/Lucy/Search/PolySearcher.o.js \
+    ../core/Lucy/Search/Collector.o.js \
+    ../core/Lucy/Search/Compiler.o.js \
+    ../core/Lucy/Search/HitQueue.o.js \
+    ../core/Lucy/Search/MatchAllMatcher.o.js \
+    ../core/Lucy/Search/Hits.o.js \
+    ../core/Lucy/Search/ANDMatcher.o.js \
+    ../core/Lucy/Search/ORQuery.o.js \
+    ../core/Lucy/Search/PhraseQuery.o.js \
+    ../core/Lucy/Search/LeafQuery.o.js \
+    ../core/Lucy/Search/SortRule.o.js \
+    ../core/Lucy/Search/Collector/SortCollector.o.js \
+    ../core/Lucy/Search/BitVecMatcher.o.js \
+    ../core/Lucy/Search/RangeQuery.o.js \
+    ../core/Lucy/Search/Query.o.js \
+    ../core/Lucy/Search/RequiredOptionalQuery.o.js \
+    ../core/Lucy/Search/SeriesMatcher.o.js \
+    ../core/Lucy/Search/PhraseMatcher.o.js \
+    ../core/Lucy/Search/NOTQuery.o.js \
+    ../core/Lucy/Search/Matcher.o.js \
+    ../core/Lucy/Search/QueryParser.o.js \
+    ../core/Lucy/Search/Span.o.js \
+    ../core/Lucy/Search/NOTMatcher.o.js \
+    ../core/Lucy/Search/TermQuery.o.js \
+    ../core/Lucy/Search/PolyMatcher.o.js \
+    ../core/Lucy/Store/RAMFile.o.js \
+    ../core/Lucy/Store/FileWindow.o.js \
+    ../core/Lucy/Store/RAMDirHandle.o.js \
+    ../core/Lucy/Store/CompoundFileReader.o.js \
+    ../core/Lucy/Store/FSFolder.o.js \
+    ../core/Lucy/Store/ErrorMessage.o.js \
+    ../core/Lucy/Store/DirHandle.o.js \
+    ../core/Lucy/Store/FileHandle.o.js \
+    ../core/Lucy/Store/Folder.o.js \
+    ../core/Lucy/Store/RAMFileHandle.o.js \
+    ../core/Lucy/Store/OutStream.o.js \
+    ../core/Lucy/Store/FSFileHandle.o.js \
+    ../core/Lucy/Store/FSDirHandle.o.js \
+    ../core/Lucy/Store/InStream.o.js \
+    ../core/Lucy/Store/Lock.o.js \
+    ../core/Lucy/Store/CompoundFileWriter.o.js \
+    ../core/Lucy/Store/RAMFolder.o.js \
+    ../core/Lucy/Store/LockFileLock.o.js \
+    ../core/Lucy/Object/I32Array.o.js \
+    ../core/Lucy/Object/BitVector.o.js \
+    ../core/Lucy/Simple.o.js \
+    ../core/Lucy/Plan/FieldType.o.js \
+    ../core/Lucy/Plan/NumericType.o.js \
+    ../core/Lucy/Plan/TextType.o.js \
+    ../core/Lucy/Plan/StringType.o.js \
+    ../core/Lucy/Plan/FullTextType.o.js \
+    ../core/Lucy/Plan/Architecture.o.js \
+    ../core/Lucy/Plan/BlobType.o.js \
+    ../core/Lucy/Plan/Schema.o.js \
+    ../core/Lucy/Analysis/Normalizer.o.js \
+    ../core/Lucy/Analysis/EasyAnalyzer.o.js \
+    ../core/Lucy/Analysis/Inversion.o.js \
+    ../core/Lucy/Analysis/StandardTokenizer.o.js \
+    ../core/Lucy/Analysis/SnowballStemmer.o.js \
+    ../core/Lucy/Analysis/SnowballStopFilter.o.js \
+    ../core/Lucy/Analysis/Analyzer.o.js \
+    ../core/Lucy/Analysis/PolyAnalyzer.o.js \
+    ../core/Lucy/Analysis/CaseFolder.o.js \
+    ../core/Lucy/Analysis/RegexTokenizer.o.js \
+    ../core/Lucy/Analysis/Token.o.js \
+    ../core/LucyX/Search/FilterMatcher.o.js \
+    ../core/LucyX/Search/ProximityMatcher.o.js \
+    ../core/LucyX/Search/MockMatcher.o.js \
+    ../core/LucyX/Search/ProximityQuery.o.js \
+    ../core/Lucy.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_finnish.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_french.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_russian.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_english.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_hungarian.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_turkish.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_romanian.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_spanish.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_dutch.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_portuguese.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_norwegian.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_german.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_porter.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_danish.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_swedish.o.js \
+    ../modules/analysis/snowstem/source/src_c/stem_UTF_8_italian.o.js \
+    ../modules/analysis/snowstem/source/libstemmer/libstemmer_utf8.o.js \
+    ../modules/analysis/snowstem/source/runtime/api.o.js \
+    ../modules/analysis/snowstem/source/runtime/utilities.o.js \
+    ../modules/analysis/snowstop/source/snowball_stoplists.o.js \
+    ../modules/unicode/utf8proc/utf8proc.o.js \
+    ../core/Lucy/Util/Json/JsonParser.o.js \
+    autogen/source/lucy_parcel.o.js
+LUCY_SHARED_LIB_CFLAGS = -fPIC $(LUCY_CFLAGS) -D CFP_LUCY
+LUCY_SHARED_LIB_LDFLAGS = -g -L /home/sg/git/lucy.js/lucy_dist/prefix/lib -l m -l clownfish -l pcre
+TESTLUCY_SHARED_LIB = libtestlucy.so.0.6.0
+TESTLUCY_SHARED_LIB_OBJS = \
+    ../test/Lucy/Test/TestUtils.o.js \
+    ../test/Lucy/Test/Index/TestSegWriter.o.js \
+    ../test/Lucy/Test/Index/TestPolyReader.o.js \
+    ../test/Lucy/Test/Index/TestSegment.o.js \
+    ../test/Lucy/Test/Index/TestBackgroundMerger.o.js \
+    ../test/Lucy/Test/Index/TestDocWriter.o.js \
+    ../test/Lucy/Test/Index/TestIndexManager.o.js \
+    ../test/Lucy/Test/Index/TestSortWriter.o.js \
+    ../test/Lucy/Test/Index/NoMergeManager.o.js \
+    ../test/Lucy/Test/Index/TestPostingListWriter.o.js \
+    ../test/Lucy/Test/Index/TestHighlightWriter.o.js \
+    ../test/Lucy/Test/Index/TestTermInfo.o.js \
+    ../test/Lucy/Test/Index/TestSnapshot.o.js \
+    ../test/Lucy/Test/Util/TestMemoryPool.o.js \
+    ../test/Lucy/Test/Util/TestPriorityQueue.o.js \
+    ../test/Lucy/Test/Util/TestSortExternal.o.js \
+    ../test/Lucy/Test/Util/TestJson.o.js \
+    ../test/Lucy/Test/Util/TestNumberUtils.o.js \
+    ../test/Lucy/Test/Util/TestStringHelper.o.js \
+    ../test/Lucy/Test/Util/TestFreezer.o.js \
+    ../test/Lucy/Test/Util/TestIndexFileNames.o.js \
+    ../test/Lucy/Test/Highlight/TestHighlighter.o.js \
+    ../test/Lucy/Test/Highlight/TestHeatMap.o.js \
+    ../test/Lucy/Test/Search/TestTermQuery.o.js \
+    ../test/Lucy/Test/Search/TestReqOptQuery.o.js \
+    ../test/Lucy/Test/Search/TestRangeQuery.o.js \
+    ../test/Lucy/Test/Search/TestMatchAllQuery.o.js \
+    ../test/Lucy/Test/Search/TestLeafQuery.o.js \
+    ../test/Lucy/Test/Search/TestNOTQuery.o.js \
+    ../test/Lucy/Test/Search/TestPolySearcher.o.js \
+    ../test/Lucy/Test/Search/TestSpan.o.js \
+    ../test/Lucy/Test/Search/TestPhraseQuery.o.js \
+    ../test/Lucy/Test/Search/TestQueryParserLogic.o.js \
+    ../test/Lucy/Test/Search/TestNoMatchQuery.o.js \
+    ../test/Lucy/Test/Search/TestQueryParser.o.js \
+    ../test/Lucy/Test/Search/TestSeriesMatcher.o.js \
+    ../test/Lucy/Test/Search/TestSortSpec.o.js \
+    ../test/Lucy/Test/Search/TestPolyQuery.o.js \
+    ../test/Lucy/Test/Search/TestQueryParserSyntax.o.js \
+    ../test/Lucy/Test/Store/TestLock.o.js \
+    ../test/Lucy/Test/Store/TestInStream.o.js \
+    ../test/Lucy/Test/Store/TestFileHandle.o.js \
+    ../test/Lucy/Test/Store/TestIOChunks.o.js \
+    ../test/Lucy/Test/Store/TestFolderCommon.o.js \
+    ../test/Lucy/Test/Store/TestRAMDirHandle.o.js \
+    ../test/Lucy/Test/Store/TestCompoundFileWriter.o.js \
+    ../test/Lucy/Test/Store/TestRAMFolder.o.js \
+    ../test/Lucy/Test/Store/TestFSDirHandle.o.js \
+    ../test/Lucy/Test/Store/TestCompoundFileReader.o.js \
+    ../test/Lucy/Test/Store/TestIOPrimitives.o.js \
+    ../test/Lucy/Test/Store/TestRAMFileHandle.o.js \
+    ../test/Lucy/Test/Store/TestFSFolder.o.js \
+    ../test/Lucy/Test/Store/MockFileHandle.o.js \
+    ../test/Lucy/Test/Store/TestFolder.o.js \
+    ../test/Lucy/Test/Store/TestFSFileHandle.o.js \
+    ../test/Lucy/Test/Object/TestI32Array.o.js \
+    ../test/Lucy/Test/Object/TestBitVector.o.js \
+    ../test/Lucy/Test/Plan/TestFullTextType.o.js \
+    ../test/Lucy/Test/Plan/TestNumericType.o.js \
+    ../test/Lucy/Test/Plan/TestFieldMisc.o.js \
+    ../test/Lucy/Test/Plan/TestFieldType.o.js \
+    ../test/Lucy/Test/Plan/TestBlobType.o.js \
+    ../test/Lucy/Test/Plan/TestArchitecture.o.js \
+    ../test/Lucy/Test/TestSimple.o.js \
+    ../test/Lucy/Test/Analysis/TestNormalizer.o.js \
+    ../test/Lucy/Test/Analysis/TestRegexTokenizer.o.js \
+    ../test/Lucy/Test/Analysis/TestStandardTokenizer.o.js \
+    ../test/Lucy/Test/Analysis/TestSnowballStopFilter.o.js \
+    ../test/Lucy/Test/Analysis/TestPolyAnalyzer.o.js \
+    ../test/Lucy/Test/Analysis/TestAnalyzer.o.js \
+    ../test/Lucy/Test/Analysis/TestCaseFolder.o.js \
+    ../test/Lucy/Test/Analysis/TestSnowballStemmer.o.js \
+    ../test/Lucy/Test/TestSchema.o.js \
+    ../test/Lucy/Test.o.js \
+    ../test/TestLucy.o.js \
+    autogen/source/testlucy_parcel.o.js
+TESTLUCY_SHARED_LIB_CFLAGS = -fPIC $(LUCY_CFLAGS) -D CFP_TESTLUCY
+TESTLUCY_SHARED_LIB_LDFLAGS = -g -L /home/sg/git/lucy.js/lucy_dist/prefix/lib liblucy.so.0.6 -l clownfish -l m
+LEMON_EXE = ../lemon/lemon
+LEMON_EXE_OBJS = ../lemon/lemon.o.js
+LEMON_EXE_CFLAGS = 
+LEMON_EXE_LDFLAGS = 
+CLOWNFISH_HEADERS = \
+    ../core/Lucy/Simple.cfh \
+    ../core/Lucy/Index/IndexReader.cfh \
+    ../core/Lucy/Index/RawLexicon.cfh \
+    ../core/Lucy/Index/DeletionsReader.cfh \
+    ../core/Lucy/Index/Lexicon.cfh \
+    ../core/Lucy/Index/Similarity.cfh \
+    ../core/Lucy/Index/LexiconReader.cfh \
+    ../core/Lucy/Index/SkipStepper.cfh \
+    ../core/Lucy/Index/SortWriter.cfh \
+    ../core/Lucy/Index/DocWriter.cfh \
+    ../core/Lucy/Index/DocVector.cfh \
+    ../core/Lucy/Index/DataReader.cfh \
+    ../core/Lucy/Index/LexiconWriter.cfh \
+    ../core/Lucy/Index/RawPostingList.cfh \
+    ../core/Lucy/Index/PostingListWriter.cfh \
+    ../core/Lucy/Index/SegPostingList.cfh \
+    ../core/Lucy/Index/DocReader.cfh \
+    ../core/Lucy/Index/PolyLexicon.cfh \
+    ../core/Lucy/Index/SegWriter.cfh \
+    ../core/Lucy/Index/Snapshot.cfh \
+    ../core/Lucy/Index/LexIndex.cfh \
+    ../core/Lucy/Index/Inverter.cfh \
+    ../core/Lucy/Index/Indexer.cfh \
+    ../core/Lucy/Index/Segment.cfh \
+    ../core/Lucy/Index/SortFieldWriter.cfh \
+    ../core/Lucy/Index/SegLexicon.cfh \
+    ../core/Lucy/Index/DeletionsWriter.cfh \
+    ../core/Lucy/Index/PostingList.cfh \
+    ../core/Lucy/Index/Posting.cfh \
+    ../core/Lucy/Index/PostingListReader.cfh \
+    ../core/Lucy/Index/PostingPool.cfh \
+    ../core/Lucy/Index/IndexManager.cfh \
+    ../core/Lucy/Index/SortCache.cfh \
+    ../core/Lucy/Index/HighlightReader.cfh \
+    ../core/Lucy/Index/SortCache/TextSortCache.cfh \
+    ../core/Lucy/Index/SortCache/NumericSortCache.cfh \
+    ../core/Lucy/Index/BackgroundMerger.cfh \
+    ../core/Lucy/Index/SortReader.cfh \
+    ../core/Lucy/Index/DataWriter.cfh \
+    ../core/Lucy/Index/SegReader.cfh \
+    ../core/Lucy/Index/TermInfo.cfh \
+    ../core/Lucy/Index/HighlightWriter.cfh \
+    ../core/Lucy/Index/TermStepper.cfh \
+    ../core/Lucy/Index/PolyReader.cfh \
+    ../core/Lucy/Index/Posting/ScorePosting.cfh \
+    ../core/Lucy/Index/Posting/RawPosting.cfh \
+    ../core/Lucy/Index/Posting/RichPosting.cfh \
+    ../core/Lucy/Index/Posting/MatchPosting.cfh \
+    ../core/Lucy/Index/FilePurger.cfh \
+    ../core/Lucy/Index/BitVecDelDocs.cfh \
+    ../core/Lucy/Index/TermVector.cfh \
+    ../core/Lucy/Util/Stepper.cfh \
+    ../core/Lucy/Util/BlobSortEx.cfh \
+    ../core/Lucy/Util/MemoryPool.cfh \
+    ../core/Lucy/Util/Freezer.cfh \
+    ../core/Lucy/Util/IndexFileNames.cfh \
+    ../core/Lucy/Util/NumberUtils.cfh \
+    ../core/Lucy/Util/ProcessID.cfh \
+    ../core/Lucy/Util/SortExternal.cfh \
+    ../core/Lucy/Util/Json.cfh \
+    ../core/Lucy/Util/PriorityQueue.cfh \
+    ../core/Lucy/Util/Debug.cfh \
+    ../core/Lucy/Util/Sleep.cfh \
+    ../core/Lucy/Util/StringHelper.cfh \
+    ../core/Lucy/Highlight/Highlighter.cfh \
+    ../core/Lucy/Highlight/HeatMap.cfh \
+    ../core/Lucy/Document/HitDoc.cfh \
+    ../core/Lucy/Document/Doc.cfh \
+    ../core/Lucy/Search/Hits.cfh \
+    ../core/Lucy/Search/Query.cfh \
+    ../core/Lucy/Search/PolyQuery.cfh \
+    ../core/Lucy/Search/Matcher.cfh \
+    ../core/Lucy/Search/BitVecMatcher.cfh \
+    ../core/Lucy/Search/QueryParser.cfh \
+    ../core/Lucy/Search/Compiler.cfh \
+    ../core/Lucy/Search/QueryParser/ParserElem.cfh \
+    ../core/Lucy/Search/QueryParser/QueryLexer.cfh \
+    ../core/Lucy/Search/LeafQuery.cfh \
+    ../core/Lucy/Search/Searcher.cfh \
+    ../core/Lucy/Search/Collector.cfh \
+    ../core/Lucy/Search/TermMatcher.cfh \
+    ../core/Lucy/Search/PhraseMatcher.cfh \
+    ../core/Lucy/Search/ANDQuery.cfh \
+    ../core/Lucy/Search/NOTQuery.cfh \
+    ../core/Lucy/Search/RequiredOptionalQuery.cfh \
+    ../core/Lucy/Search/NoMatchQuery.cfh \
+    ../core/Lucy/Search/NoMatchMatcher.cfh \
+    ../core/Lucy/Search/PolyMatcher.cfh \
+    ../core/Lucy/Search/SortSpec.cfh \
+    ../core/Lucy/Search/NOTMatcher.cfh \
+    ../core/Lucy/Search/TopDocs.cfh \
+    ../core/Lucy/Search/Collector/SortCollector.cfh \
+    ../core/Lucy/Search/SeriesMatcher.cfh \
+    ../core/Lucy/Search/Span.cfh \
+    ../core/Lucy/Search/ANDMatcher.cfh \
+    ../core/Lucy/Search/ORMatcher.cfh \
+    ../core/Lucy/Search/MatchDoc.cfh \
+    ../core/Lucy/Search/RangeQuery.cfh \
+    ../core/Lucy/Search/MatchAllMatcher.cfh \
+    ../core/Lucy/Search/PhraseQuery.cfh \
+    ../core/Lucy/Search/RangeMatcher.cfh \
+    ../core/Lucy/Search/SortRule.cfh \
+    ../core/Lucy/Search/PolySearcher.cfh \
+    ../core/Lucy/Search/TermQuery.cfh \
+    ../core/Lucy/Search/RequiredOptionalMatcher.cfh \
+    ../core/Lucy/Search/IndexSearcher.cfh \
+    ../core/Lucy/Search/HitQueue.cfh \
+    ../core/Lucy/Search/MatchAllQuery.cfh \
+    ../core/Lucy/Search/ORQuery.cfh \
+    ../core/Lucy/Store/RAMFolder.cfh \
+    ../core/Lucy/Store/CompoundFileWriter.cfh \
+    ../core/Lucy/Store/FSFolder.cfh \
+    ../core/Lucy/Store/RAMDirHandle.cfh \
+    ../core/Lucy/Store/LockFileLock.cfh \
+    ../core/Lucy/Store/FSDirHandle.cfh \
+    ../core/Lucy/Store/Lock.cfh \
+    ../core/Lucy/Store/CompoundFileReader.cfh \
+    ../core/Lucy/Store/OutStream.cfh \
+    ../core/Lucy/Store/FileWindow.cfh \
+    ../core/Lucy/Store/InStream.cfh \
+    ../core/Lucy/Store/DirHandle.cfh \
+    ../core/Lucy/Store/ErrorMessage.cfh \
+    ../core/Lucy/Store/Folder.cfh \
+    ../core/Lucy/Store/FSFileHandle.cfh \
+    ../core/Lucy/Store/FileHandle.cfh \
+    ../core/Lucy/Store/RAMFile.cfh \
+    ../core/Lucy/Store/RAMFileHandle.cfh \
+    ../core/Lucy/Object/BitVector.cfh \
+    ../core/Lucy/Object/I32Array.cfh \
+    ../core/Lucy/Plan/FullTextType.cfh \
+    ../core/Lucy/Plan/FieldType.cfh \
+    ../core/Lucy/Plan/BlobType.cfh \
+    ../core/Lucy/Plan/StringType.cfh \
+    ../core/Lucy/Plan/TextType.cfh \
+    ../core/Lucy/Plan/NumericType.cfh \
+    ../core/Lucy/Plan/Schema.cfh \
+    ../core/Lucy/Plan/Architecture.cfh \
+    ../core/Lucy/Analysis/SnowballStopFilter.cfh \
+    ../core/Lucy/Analysis/CaseFolder.cfh \
+    ../core/Lucy/Analysis/EasyAnalyzer.cfh \
+    ../core/Lucy/Analysis/RegexTokenizer.cfh \
+    ../core/Lucy/Analysis/SnowballStemmer.cfh \
+    ../core/Lucy/Analysis/Token.cfh \
+    ../core/Lucy/Analysis/StandardTokenizer.cfh \
+    ../core/Lucy/Analysis/Analyzer.cfh \
+    ../core/Lucy/Analysis/Inversion.cfh \
+    ../core/Lucy/Analysis/Normalizer.cfh \
+    ../core/Lucy/Analysis/PolyAnalyzer.cfh \
+    ../core/LucyX/Search/ProximityQuery.cfh \
+    ../core/LucyX/Search/ProximityMatcher.cfh \
+    ../core/LucyX/Search/MockMatcher.cfh \
+    ../core/LucyX/Search/FilterMatcher.cfh \
+    ../test/Lucy/Test/Index/TestSegWriter.cfh \
+    ../test/Lucy/Test/Index/TestBackgroundMerger.cfh \
+    ../test/Lucy/Test/Index/TestSnapshot.cfh \
+    ../test/Lucy/Test/Index/NoMergeManager.cfh \
+    ../test/Lucy/Test/Index/TestSegment.cfh \
+    ../test/Lucy/Test/Index/TestHighlightWriter.cfh \
+    ../test/Lucy/Test/Index/TestPostingListWriter.cfh \
+    ../test/Lucy/Test/Index/TestDocWriter.cfh \
+    ../test/Lucy/Test/Index/TestTermInfo.cfh \
+    ../test/Lucy/Test/Index/TestPolyReader.cfh \
+    ../test/Lucy/Test/Index/TestSortWriter.cfh \
+    ../test/Lucy/Test/Index/TestIndexManager.cfh \
+    ../test/Lucy/Test/TestUtils.cfh \
+    ../test/Lucy/Test/Util/TestPriorityQueue.cfh \
+    ../test/Lucy/Test/Util/TestSortExternal.cfh \
+    ../test/Lucy/Test/Util/TestNumberUtils.cfh \
+    ../test/Lucy/Test/Util/TestFreezer.cfh \
+    ../test/Lucy/Test/Util/TestStringHelper.cfh \
+    ../test/Lucy/Test/Util/TestIndexFileNames.cfh \
+    ../test/Lucy/Test/Util/TestJson.cfh \
+    ../test/Lucy/Test/Util/TestMemoryPool.cfh \
+    ../test/Lucy/Test/Highlight/TestHighlighter.cfh \
+    ../test/Lucy/Test/Highlight/TestHeatMap.cfh \
+    ../test/Lucy/Test/TestSchema.cfh \
+    ../test/Lucy/Test/Search/TestQueryParser.cfh \
+    ../test/Lucy/Test/Search/TestQueryParserLogic.cfh \
+    ../test/Lucy/Test/Search/TestTermQuery.cfh \
+    ../test/Lucy/Test/Search/TestLeafQuery.cfh \
+    ../test/Lucy/Test/Search/TestSpan.cfh \
+    ../test/Lucy/Test/Search/TestReqOptQuery.cfh \
+    ../test/Lucy/Test/Search/TestMatchAllQuery.cfh \
+    ../test/Lucy/Test/Search/TestPhraseQuery.cfh \
+    ../test/Lucy/Test/Search/TestPolySearcher.cfh \
+    ../test/Lucy/Test/Search/TestSeriesMatcher.cfh \
+    ../test/Lucy/Test/Search/TestSortSpec.cfh \
+    ../test/Lucy/Test/Search/TestQueryParserSyntax.cfh \
+    ../test/Lucy/Test/Search/TestPolyQuery.cfh \
+    ../test/Lucy/Test/Search/TestRangeQuery.cfh \
+    ../test/Lucy/Test/Search/TestNoMatchQuery.cfh \
+    ../test/Lucy/Test/Search/TestNOTQuery.cfh \
+    ../test/Lucy/Test/Store/TestFolder.cfh \
+    ../test/Lucy/Test/Store/TestInStream.cfh \
+    ../test/Lucy/Test/Store/MockFileHandle.cfh \
+    ../test/Lucy/Test/Store/TestIOChunks.cfh \
+    ../test/Lucy/Test/Store/TestRAMFileHandle.cfh \
+    ../test/Lucy/Test/Store/TestCompoundFileReader.cfh \
+    ../test/Lucy/Test/Store/TestLock.cfh \
+    ../test/Lucy/Test/Store/TestIOPrimitives.cfh \
+    ../test/Lucy/Test/Store/TestFileHandle.cfh \
+    ../test/Lucy/Test/Store/TestFolderCommon.cfh \
+    ../test/Lucy/Test/Store/TestFSDirHandle.cfh \
+    ../test/Lucy/Test/Store/TestRAMDirHandle.cfh \
+    ../test/Lucy/Test/Store/TestCompoundFileWriter.cfh \
+    ../test/Lucy/Test/Store/TestRAMFolder.cfh \
+    ../test/Lucy/Test/Store/TestFSFolder.cfh \
+    ../test/Lucy/Test/Store/TestFSFileHandle.cfh \
+    ../test/Lucy/Test/Object/TestI32Array.cfh \
+    ../test/Lucy/Test/Object/TestBitVector.cfh \
+    ../test/Lucy/Test/Plan/TestArchitecture.cfh \
+    ../test/Lucy/Test/Plan/TestBlobType.cfh \
+    ../test/Lucy/Test/Plan/TestFieldMisc.cfh \
+    ../test/Lucy/Test/Plan/TestFullTextType.cfh \
+    ../test/Lucy/Test/Plan/TestNumericType.cfh \
+    ../test/Lucy/Test/Plan/TestFieldType.cfh \
+    ../test/Lucy/Test/TestSimple.cfh \
+    ../test/Lucy/Test/Analysis/TestPolyAnalyzer.cfh \
+    ../test/Lucy/Test/Analysis/TestStandardTokenizer.cfh \
+    ../test/Lucy/Test/Analysis/TestAnalyzer.cfh \
+    ../test/Lucy/Test/Analysis/TestNormalizer.cfh \
+    ../test/Lucy/Test/Analysis/TestSnowballStopFilter.cfh \
+    ../test/Lucy/Test/Analysis/TestRegexTokenizer.cfh \
+    ../test/Lucy/Test/Analysis/TestCaseFolder.cfh \
+    ../test/Lucy/Test/Analysis/TestSnowballStemmer.cfh \
+    ../test/Lucy/Test.cfh
+TEST_LUCY_EXE = t/test_lucy
+TEST_LUCY_EXE_OBJS = t/test_lucy.o.js
+TEST_LUCY_EXE_CFLAGS = $(LUCY_CFLAGS)
+TEST_LUCY_EXE_LDFLAGS = -L /home/sg/git/lucy.js/lucy_dist/prefix/lib -Wl,--disable-new-dtags -Wl,-rpath,"$$PWD" -Wl,--disable-new-dtags -Wl,-rpath,/home/sg/git/lucy.js/lucy_dist/prefix/lib libtestlucy.so.0.6 liblucy.so.0.6 -l clownfish
+
+all : $(LUCY_SHARED_LIB)
+
+../core/Lucy/Util/Json/JsonParser.c : ../core/Lucy/Util/Json/JsonParser.y $(LEMON_EXE)
+	$(LEMON_EXE) -q ../core/Lucy/Util/Json/JsonParser.y
+
+$(LUCY_SHARED_LIB_OBJS) : autogen/hierarchy.json ../core/Lucy/Util/Json/JsonParser.c
+
+$(TESTLUCY_SHARED_LIB_OBJS) : autogen/hierarchy.json
+
+autogen/hierarchy.json : $(CLOWNFISH_HEADERS)
+	/home/sg/git/lucy.js/lucy_dist/prefix/bin/cfc --source=../core --source=../test --include=/home/sg/git/lucy.js/lucy_dist/prefix/share/clownfish/include --dest=autogen --header=cfc_header
+
+autogen/source/lucy_parcel.c : autogen/hierarchy.json
+
+autogen/source/testlucy_parcel.c : autogen/hierarchy.json
+
+$(TEST_LUCY_EXE_OBJS) : autogen/hierarchy.json
+
+test : $(TEST_LUCY_EXE)
+	$(TEST_LUCY_EXE)
+
+liblucy.so.0.6.0 : $(LUCY_SHARED_LIB_OBJS)
+	$(LINK) -o $@ -shared -Wl,-soname,liblucy.so.0.6 $(LUCY_SHARED_LIB_OBJS) $(LUCY_SHARED_LIB_LDFLAGS)
+	ln -sf liblucy.so.0.6.0 liblucy.so.0.6
+	ln -sf liblucy.so.0.6 liblucy.so
+
+src/%.o.js : src/%.c
+	$(CC) $(CFLAGS) $(LUCY_SHARED_LIB_CFLAGS) $< -o $@
+
+../core/%.o.js : ../core/%.c
+	$(CC) $(CFLAGS) $(LUCY_SHARED_LIB_CFLAGS) $< -o $@
+
+../modules/analysis/snowstem/source/%.o.js : ../modules/analysis/snowstem/source/%.c
+	$(CC) $(CFLAGS) $(LUCY_SHARED_LIB_CFLAGS) $< -o $@
+
+../modules/analysis/snowstop/source/%.o.js : ../modules/analysis/snowstop/source/%.c
+	$(CC) $(CFLAGS) $(LUCY_SHARED_LIB_CFLAGS) $< -o $@
+
+../modules/unicode/utf8proc/%.o.js : ../modules/unicode/utf8proc/%.c
+	$(CC) $(CFLAGS) $(LUCY_SHARED_LIB_CFLAGS) $< -o $@
+
+../core/Lucy/Util/Json/JsonParser.o.js : ../core/Lucy/Util/Json/JsonParser.c
+	$(CC) $(CFLAGS) $(LUCY_SHARED_LIB_CFLAGS) ../core/Lucy/Util/Json/JsonParser.c -o $@
+
+autogen/source/lucy_parcel.o.js : autogen/source/lucy_parcel.c
+	$(CC) $(CFLAGS) $(LUCY_SHARED_LIB_CFLAGS) autogen/source/lucy_parcel.c -o $@
+
+libtestlucy.so.0.6.0 : $(TESTLUCY_SHARED_LIB_OBJS) $(LUCY_SHARED_LIB)
+	$(LINK) -o $@ -shared -Wl,-soname,libtestlucy.so.0.6 $(TESTLUCY_SHARED_LIB_OBJS) $(TESTLUCY_SHARED_LIB_LDFLAGS)
+	ln -sf libtestlucy.so.0.6.0 libtestlucy.so.0.6
+	ln -sf libtestlucy.so.0.6 libtestlucy.so
+
+../test/%.o.js : ../test/%.c
+	$(CC) $(CFLAGS) $(TESTLUCY_SHARED_LIB_CFLAGS) $< -o $@
+
+autogen/source/testlucy_parcel.o.js : autogen/source/testlucy_parcel.c
+	$(CC) $(CFLAGS) $(TESTLUCY_SHARED_LIB_CFLAGS) autogen/source/testlucy_parcel.c -o $@
+
+# ../lemon/lemon : $(LEMON_EXE_OBJS)
+# 	$(LINK) -o $@ $(LEMON_EXE_OBJS) $(LEMON_EXE_LDFLAGS) 
+
+t/test_lucy : $(TEST_LUCY_EXE_OBJS) $(TESTLUCY_SHARED_LIB) $(LUCY_SHARED_LIB)
+	$(LINK) -o $@ $(TEST_LUCY_EXE_OBJS) $(TEST_LUCY_EXE_LDFLAGS) 
+
+t/test_lucy.o.js : t/test_lucy.c
+	$(CC) $(CFLAGS) $(TEST_LUCY_EXE_CFLAGS) t/test_lucy.c -o $@
+
+install : all
+	mkdir -p "$(LIBDIR)"
+	mkdir -p "$(DATADIR)"
+	mkdir -p "$(MANDIR)"
+	mkdir -p "$(LIBDIR)/pkgconfig"
+	cp -f liblucy.so.0.6.0 "$(LIBDIR)"
+	ln -sf liblucy.so.0.6.0 "$(LIBDIR)/liblucy.so.0.6"
+	ln -sf liblucy.so.0.6 "$(LIBDIR)/liblucy.so"
+	cp -Rf autogen/share/* "$(DATADIR)"
+	cp -Rf autogen/man/* "$(MANDIR)"
+	printf 'libdir=$(LIBDIR)\nversion=0.6.0\n\nName: Apache Lucy\nDescription: Full-text search for dynamic languages\nURL: http://lucy.apache.o.jsrg/\nVersion: $${version}\nRequires: clownfish\nLibs: -L$${libdir} -llucy\n' >"$(LIBDIR)/pkgconfig/lucy.pc"
+
+clean :
+	rm -f $(LUCY_SHARED_LIB_OBJS)
+	rm -f liblucy.so.0.6.0
+	rm -f liblucy.so.0.6
+	rm -f liblucy.so
+	rm -f $(TESTLUCY_SHARED_LIB_OBJS)
+	rm -f libtestlucy.so.0.6.0
+	rm -f libtestlucy.so.0.6
+	rm -f libtestlucy.so
+	rm -f $(LEMON_EXE_OBJS)
+	rm -f ../lemon/lemon
+	rm -f ../core/Lucy/Util/Json/JsonParser.h
+	rm -f ../core/Lucy/Util/Json/JsonParser.c
+	rm -rf autogen
+	rm -f $(TEST_LUCY_EXE_OBJS)
+	rm -f t/test_lucy
+
+distclean : clean
+	rm -f charmonizer charmonizer.o.jsbj charmony.h Makefile
+
+.c.o.js :
+	$(CC) $(CFLAGS) $< -o $@
+

@@ -21,7 +21,7 @@ git clone https://git-wip-us.apache.org/repos/asf/lucy.git
 
 
 cd $FOLDER/lucy-clownfish/runtime/c
-./configure --prefix=$PREFIX
+./configure --prefix=$PREFIX --disable-threads
 make clean
 make
 make install  
